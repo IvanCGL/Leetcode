@@ -1,0 +1,66 @@
+class Solution {
+public:
+    int trap(vector<int>& height) {
+        stack<pair<int,int>> stk;
+        int n = height.size();
+        int fedge = 0;
+        int fplane = height[0];
+        int i = 1;
+        int contain = 0;
+        int plane;
+        int edge;
+        for(i; i < n; i++)
+        {
+            plane = height[i];
+            edge = i;
+            if(plane >= fplane)//清空栈
+            {
+                while(!stk.empty())
+                {                   
+                    auto top = stk.top();
+                    contain += (edge - top.first) * (fplane - top.second);
+                    edge = top.first;
+                    stk.pop();
+                }
+                fedge = edge;
+                fplane = plane;
+            }
+            else if(stk.empty())
+            {
+                stk.push(make_pair(edge, plane));
+            }
+            else
+            {
+                auto top = stk.top();
+                if(plane < top.second)
+                {
+                    stk.push(make_pair(edge, plane));
+                }
+                else if(plane > top.second)
+                {
+                    while(plane> top.second)
+                    {
+                        contain += (edge - top.first) * (plane - top.second);
+                        edge = top.first;
+                        stk.pop();
+                        if(stk.empty()) break;
+                        top = stk.top();
+                    }
+                    if(stk.empty())
+                    {
+                        stk.push(make_pair(edge, plane));
+                    }
+                    else
+                    {
+                        top = stk.top();
+                        if(plane < top.second)
+                        {
+                            stk.push(make_pair(edge, plane));
+                        }
+                    }
+                }
+            }
+        }
+        return contain;
+    }
+};
